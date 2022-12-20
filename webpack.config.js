@@ -100,3 +100,27 @@ module.exports = {
     hot: false,
   },
 }
+// webpack.config.js
+const path = require('path')
+
+/* -------------------------------------------------------------------------- */
+/*                              BABEL FOR WEBPACK                             */
+/* -------------------------------------------------------------------------- */
+
+module.exports = {
+  // ... existing code
+  module: {
+    rules: [
+      // this is an array of rules
+      // add an object containing rules for Babel to it
+      {
+        // a regular expression that searches for all js files
+        test: /\.js$/,
+        // all files must be processed by babel-loader
+        loader: 'babel-loader',
+        // exclude the node_modules folder, we don't need to process files in it
+        exclude: '/node_modules/',
+      },
+    ],
+  },
+}
