@@ -1,83 +1,8 @@
-/* -------------------------------------------------------------------------- */
-/*                            DEBUGGER AND DEVTOOL                            */
-/* -------------------------------------------------------------------------- */
 // webpack.config.js
-module.exports = {
-  devtool: 'inline-source-map',
-  entry: {
-    main: './src/index.js',
-  },
-  // ... existing code
-}
-
-/* -------------------------------------------------------------------------- */
-/*                     POINT OF ENTRY  USING PATH UTILITY                     */
-/* -------------------------------------------------------------------------- */
-const path = require('path') // connect path to webpack config
-
-module.exports = {
-  entry: {
-    main: './src/index.js',
-  },
-  output: {
-    // rewrite the output point using the path utility
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js',
-    publicPath: '',
-  },
-}
-/* -------------------------------------------------------------------------- */
-/*                        CONNECTING WEBPACK TO CONFIG                        */
-/* -------------------------------------------------------------------------- */
-
-// webpack.config.js
-const path = require('path') // connect path to webpack config
-
-module.exports = {
-  entry: {
-    main: './src/index.js',
-  },
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js',
-    publicPath: '',
-  },
-  mode: 'development', // add development mode here like this
-}
-/* -------------------------------------------------------------------------- */
-/*                        DEPLOYMENT OF LOCALHOST 8080                        */
-/* -------------------------------------------------------------------------- */
-module.exports = {
-  // ... previous settings
-  mode: 'development',
-  devServer: {
-    static: path.resolve(__dirname, './dist'), // specifies a folder from where to serve the application and its contents
-    compress: true, // this will speed up file loading in development mode
-    port: 8080, // will open your site at localhost:8080 (you can use another port)
-    open: true, // site will open automatically in the browser after executing npm run dev
-    liveReload: true,
-    hot: false,
-  },
-}
-/* -------------------------------------------------------------------------- */
-/*                                STATS  MODULE                               */
-/* -------------------------------------------------------------------------- */
-
-module.exports = {
-  devtool: 'inline-source-map',
-  entry: {
-    main: './src/index.js',
-  },
-  stats: 'errors-only', // only output when errors happen
-  // ... existing code
-}
-
-/* -------------------------------------------------------------------------- */
-/*                         CONFIG FILE OF ALL CHANGES                         */
-/* -------------------------------------------------------------------------- */
-// webpack.config.js
-
 const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = {
   devtool: 'inline-source-map',
@@ -89,8 +14,9 @@ module.exports = {
     filename: 'main.js',
     publicPath: '',
   },
-  mode: 'development',
+  target: ['web', 'es5'],
   stats: 'errors-only',
+  mode: 'development',
   devServer: {
     static: path.resolve(__dirname, './dist'),
     compress: true,
@@ -99,16 +25,6 @@ module.exports = {
     liveReload: true,
     hot: false,
   },
-}
-// webpack.config.js
-const path = require('path')
-
-/* -------------------------------------------------------------------------- */
-/*                              BABEL FOR WEBPACK                             */
-/* -------------------------------------------------------------------------- */
-
-module.exports = {
-  // ... existing code
   module: {
     rules: [
       // this is an array of rules
@@ -121,6 +37,31 @@ module.exports = {
         // exclude the node_modules folder, we don't need to process files in it
         exclude: '/node_modules/',
       },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+            },
+          },
+          'postcss-loader',
+        ],
+      },
+      {
+        // add the rule for processing files
+        test: /\.(png|svg|jpg|gif|woff(2)?|eot|ttf|otf)$/,
+        type: 'asset/resource',
+      },
     ],
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html', // path to our index.html file
+    }),
+    new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin(), // connect the plugin for merging CSS files
+  ],
 }
